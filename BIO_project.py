@@ -15,6 +15,7 @@ from skimage.transform import resize
 from PIL import Image, ImageEnhance
 from Detectors import Detectors
 
+brightness_factors = [0.1, 0.3, 0.6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 
 def filter_images_by_face_width(img_dir, face_width, img_limit, out_dir):
     images = list(pathlib.Path(img_dir).rglob("*.jpg"))
@@ -42,7 +43,6 @@ def do_analysis_per_folder(dir, results_graph=None):
     det3 = 0
     det4 = 0
     det5 = 0
-    labels = ['Faco Recog.', 'Haar', 'HoG', 'CNN', 'DNN (cvlib)']
     all_files = len(os.listdir(dir))
     for file in os.listdir(dir):
         #print("File: " , file)
@@ -74,6 +74,7 @@ def do_analysis_all(base_dir):
     r3 = []
     r4 = []
     r5 = []
+    inner_dirs = sorted(inner_dirs)
     for dir in inner_dirs:
             det1 = 0
             det2 = 0
@@ -88,15 +89,12 @@ def do_analysis_all(base_dir):
                     det1 += 1
                 if D.detectFaceViaHaarCascadeFaceDetector():
                     det2 += 1
-                #if D.detectFaceViaHoGFaceDetector():
+                if D.detectFaceViaHoGFaceDetector():
                     det3 += 1
-                #if D.detectFaceViaCNNFaceDetector():
+                if D.detectFaceViaCNNFaceDetector():
                     det4 += 1
-                #if D.detectFaceViaCVLIBFaceDetector():
+                if D.detectFaceViaCVLIBFaceDetector():
                     det5 += 1
-
-            df = pd.DataFrame({'x': range(1, 11), 'd1': np.random.randn(10), 'd2': np.random.randn(
-                10)+range(1, 11), 'd3': np.random.randn(10)+range(11, 21), 'd4': np.random.randn(10)+range(21, 31), 'd5': np.random.randn(10)+range(31, 41)})
 
             r1.append((det1 * 100.0) / all_files)
             r2.append((det2 * 100.0) / all_files)
@@ -104,30 +102,29 @@ def do_analysis_all(base_dir):
             r4.append((det4 * 100.0) / all_files)
             r5.append((det5 * 100.0) / all_files)
             print("Rasa: ", os.path.basename(dir))
-            print("Face recognization: ", det1)
+            print("Face recognition: ", det1)
             print("Haar: ", det2)
             print("HoG: ", det3)
             print("CNN: ", det4)
             print("DNN: ", det5)
-            det1 = det2 = det3 = det4 = det5 = 0
 
-    df = pd.DataFrame({'x': range(1, len(r1) + 1), 'd1': np.array(r1), 'd2': np.array(
-        r2), 'd3': np.array(r3), 'd4': np.array(r4), 'd5': np.array(r5)})
-    plt.plot('x', 'd1', data=df, marker='o', color='green',
-             linewidth=2, label="Face recognization")
-    plt.plot('x', 'd2', data=df, marker='o',
-             color='red', linewidth=2, label="Haar")
-    plt.plot('x', 'd3', data=df, marker='o',
-             color='blue', linewidth=2, label="HoG")
-    plt.plot('x', 'd4', data=df, marker='o',
-             color='black', linewidth=2, label="CNN")
-    plt.plot('x', 'd5', data=df, marker='o',
-             color='yellow', linewidth=2, label="DNN (cvlib)")
+    #df = pd.DataFrame({'x': np.array(brightness_factors), 'd1': np.array(r1), 'd2': np.array(
+    #    r2), 'd3': np.array(r3), 'd4': np.array(r4), 'd5': np.array(r5)})
+    #df['x'] = df['x'].astype(str)
+
+
+    plt.bar(np.array(brightness_factors) - 0.08, r1, color = 'blue', width = 0.03, label="Face recognition")
+    plt.bar(np.array(brightness_factors) - 0.04, r2, color = 'green', width = 0.03, label="Haar (opencv)")
+    plt.bar(np.array(brightness_factors) , r3, color = 'red', width = 0.03, label="HoG (dlib)")
+    plt.bar(np.array(brightness_factors) + 0.04, r4, color = 'black', width = 0.03, label="CNN (dlib)")
+    plt.bar(np.array(brightness_factors) + 0.08, r5, color = 'yellow', width = 0.03, label="DNN (cvlib)")
+    plt.xticks(np.array(brightness_factors))
     plt.ylabel('úspešnosť detekcie (%)')
-    plt.xlabel('downscale factor')
-    plt.title('Vplyv zmeny rozlíšenia na úspešnosť detekcie tváre')
+    plt.xlabel('faktor jasu')
+    plt.title('Vplyv zmeny jasu na úspešnosť detekcie tváre')
     plt.legend()
     plt.show()
+    #plt.savefig(os.path.dirname(base_dir) + ".png")
 
 
 #do_analysis_all("/home/xbolva00/face_detect/BIO_face_detectors/Dataset/tt/")
@@ -153,16 +150,20 @@ def downscale_images_in_folder(img_dir, downscale_factor):
         io.imsave(os.path.join(out_dir, os.path.basename(img)),
                   img_as_ubyte(image_downscaled))
 
-def change_brightness_for_images_in_folder(img_dir, contrast_factor):
+def change_brightness_for_images_in_folder(img_dir, brightness_factor):
     images = list(pathlib.Path(img_dir).rglob("*.jpg"))
-    out_dir = os.path.join(img_dir, "brightness_" + str(contrast_factor))
+    out_dir = os.path.join(pathlib.Path(img_dir).parents[0], os.path.dirname(img_dir) + "_brightness_" + str(brightness_factor))
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
-
     for img in images:
         im = Image.open(img)
-        contrast = ImageEnhance.Contrast(im)
-        contrast = contrast.enhance(contrast_factor) # set FACTOR > 1 to enhance contrast, < 1 to decrease
-        contrast.save(os.path.join(out_dir, os.path.basename(img)))
+        enhancer = ImageEnhance.Brightness(im)
+        newimg = enhancer.enhance(brightness_factor) # set FACTOR > 1 to enhance contrast, < 1 to decrease
+        newimg.save(os.path.join(out_dir, os.path.basename(img)))
 
-change_brightness_for_images_in_folder("/home/xbolva00/face_detect/BIO_face_detectors/Dataset/tt/Negroidna/", 9.9)
+def change_brightness(strain):
+    for i in brightness_factors:
+        change_brightness_for_images_in_folder("/home/xbolva00/face_detect/BIO_face_detectors/Dataset/rozslisenie2/" + strain + "/", i)
+
+#change_brightness("Europoidna")
+#do_analysis_all("/home/xbolva00/face_detect/BIO_face_detectors/Dataset/rozslisenie/res/")
