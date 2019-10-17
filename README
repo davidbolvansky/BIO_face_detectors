@@ -1,0 +1,11 @@
+Závislosti:
+
+pip3 install scikit-image
+pip3 install pandas
+apt install cmake
+pip3 install face_recognition
+pip3 install opencv-python
+pip3 install tensorflow
+pip3 install cvlib
+
+Testované na Kubuntu 18.03 LTS
