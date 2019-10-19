@@ -19,9 +19,13 @@ brightness_factors = [0.1, 0.3, 0.6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
 downscale_factors = [1.0, 0.8, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
 
 
-def filter_images_by_face_width(img_dir, face_width, img_limit, out_dir):
-    images = list(pathlib.Path(img_dir).rglob("*.*"))
+def get_images_in_folder_recursively(img_dir):
+    return list(pathlib.Path(img_dir).rglob("*.jpg")) + \
+        list(pathlib.Path(img_dir).rglob("*.png"))
 
+
+def filter_images_by_face_width(img_dir, face_width, img_limit, out_dir):
+    images = get_images_in_folder_recursively(img_dir)
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
     c = 0
@@ -145,7 +149,7 @@ def do_analysis_downscale_effect(base_dir, downscale_factors):
 
 
 def downscale_images(img_dir, downscale_factor, base_out_dir):
-    images = list(pathlib.Path(img_dir).rglob("*.*"))
+    images = get_images_in_folder_recursively(img_dir)
     out_dir = os.path.join(base_out_dir, "downscale_" + str(downscale_factor))
     if not os.path.exists(out_dir):
         os.makedirs(out_dir)
@@ -160,7 +164,7 @@ def downscale_images(img_dir, downscale_factor, base_out_dir):
 
 
 def change_brightness_of_images(img_dir, brightness_factor, base_out_dir):
-    images = list(pathlib.Path(img_dir).rglob("*.*"))
+    images = get_images_in_folder_recursively(img_dir)
     out_dir = os.path.join(
         base_out_dir, "brightness_" + str(brightness_factor))
     if not os.path.exists(out_dir):
@@ -176,28 +180,28 @@ def main():
     global brightness_factors
     global downscale_factors
     parser = argparse.ArgumentParser()
-    parser.add_argument("--input-dir", help="working directory",
+    parser.add_argument('-i', "--input-dir", help="working directory (default: CWD)",
                         default=os.getcwd(), nargs='?')
-    parser.add_argument("--filter-face-width",
+    parser.add_argument('-ffw', "--filter-face-width",
                         help="filter faces by certain face width, copy them to output dir", type=int, const=90, nargs='?')
-    parser.add_argument("--filter-face-limit",
+    parser.add_argument('-ffl', "--filter-face-limit",
                         help="maximal number of faces filtered to output dir", type=int, default=100, nargs='?')
-    parser.add_argument("--output-dir", help="working directory",
+    parser.add_argument("--output-dir", help="working directory (default: CWD/out)",
                         default=os.getcwd() + "/out", nargs='?')
-    parser.add_argument("--change-brightness",
+    parser.add_argument('-cb', "--change-brightness",
                         help="change brightness factor of images; factor > 1 to enhance brightness, factor < 1 to decrease", type=float)
-    parser.add_argument("--change-brightness-default-factors",
-                        help="change brightness of images with default factors: " + str(brightness_factors), type=float)
+    parser.add_argument('-cbdf', "--change-brightness-default-factors",
+                        help="change brightness of images with default factors: " + str(brightness_factors), action='store_true')
     parser.add_argument(
-        "--downscale", help="downscale images by downscale factor; factor must be in range (0, 1>", type=float)
-    parser.add_argument("--downscale-default-factors",
-                        help="downscale with default factors: " + str(downscale_factors), type=float)
-    parser.add_argument("--brightness-effect-analysis-default-factors",
-                        help="try various face detection tools on lightened/dimmed face images and show results as a graph")
-    parser.add_argument("--downscale-effect-analysis-default-factors",
-                        help="try various face detection tools on downscalled face images and show results as a graph")
+        '-d', "--downscale", help="downscale images by downscale factor; factor must be in range (0, 1>", type=float)
+    parser.add_argument('-ddf', "--downscale-default-factors",
+                        help="downscale with default factors: " + str(downscale_factors), action='store_true')
+    parser.add_argument('-beadf', "--brightness-effect-analysis-default-factors",
+                        help="try various face detection tools on lightened/dimmed face images and show results as a graph", action='store_true')
+    parser.add_argument('-deadf', "--downscale-effect-analysis-default-factors",
+                        help="try various face detection tools on downscalled face images and show results as a graph", action='store_true')
     args = parser.parse_args()
-    print(args)
+
     if args.filter_face_width:
         count = filter_images_by_face_width(
             args.input_dir, args.filter_face_width, args.filter_face_limit, args.output_dir)
