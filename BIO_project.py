@@ -196,5 +196,5 @@ def change_scale(strain):
     for i in downscale_factors:
         downscale_images_in_folder("/home/xbolva00/BIO_face_detectors/Dataset/rozslisenie/" + strain + "/", i)
 
-#change_scale("All")
+#change_scale("fake")
 do_analysis_scale("/home/xbolva00/BIO_face_detectors/Dataset/rozslisenie/res/")
