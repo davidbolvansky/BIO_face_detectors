@@ -120,8 +120,10 @@ def do_analysis_scale(base_dir):
                     det2 += 1
                 if D.detectFaceViaHoGFaceDetector():
                     det3 += 1
+                print(file)
                 if D.detectFaceViaCNNFaceDetector():
                     det4 += 1
+                print(file)
                 if D.detectFaceViaCVLIBFaceDetector():
                     det5 += 1
 
@@ -196,5 +198,5 @@ def change_scale(strain):
     for i in downscale_factors:
         downscale_images_in_folder("/home/xbolva00/BIO_face_detectors/Dataset/rozslisenie/" + strain + "/", i)
 
-#change_scale("fake")
-do_analysis_scale("/home/xbolva00/BIO_face_detectors/Dataset/rozslisenie/res/")
+#change_brightness("fake")
+do_analysis_brightness("/home/xbolva00/BIO_face_detectors/Dataset/rozslisenie/res/")
