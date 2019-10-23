@@ -13,10 +13,10 @@ import matplotlib.pyplot as plt
 from skimage import io, img_as_ubyte
 from skimage.transform import resize
 from PIL import Image, ImageEnhance
-from Detectors import Detectors
+from Detectors import FaceDetectors
 
 brightness_factors = [0.1, 0.3, 0.6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-downscale_factors = [1.0, 0.8, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1]
+downscale_factors = [0.1, 0.2, 0.3, 0.4]#, 0.5, 0.6, 0.8, 1.0]
 
 
 def get_images_in_folder_recursively(img_dir):
@@ -53,33 +53,52 @@ def do_analysis_brightness_effect(base_dir, brightness_factors):
     r5 = []
     inner_dirs = sorted(inner_dirs)
     for dir in inner_dirs:
-            det1 = 0
-            det2 = 0
-            det3 = 0
-            det4 = 0
-            det5 = 0
-            all_files = len(os.listdir(dir))
+            det1_tp = det1_tn = det1_fp = det1_fn = 0
+            det2_tp = det2_tn = det2_fp = det2_fn = 0
+            det3_tp = det3_tn = det3_fp = det3_fn = 0
+            det4_tp = det4_tn = det4_fp = det4_fn = 0
+            det5_tp = det5_tn = det5_fp = det5_fn = 0
             for file in os.listdir(dir):
-                D = Detectors(os.path.join(dir, file))
-                if D.detectFaceViaFaceRecognition():
-                    det1 += 1
-                if D.detectFaceViaHaarCascadeFaceDetector():
-                    det2 += 1
-                if D.detectFaceViaHoGFaceDetector():
-                    det3 += 1
-                if D.detectFaceViaCNNFaceDetector():
-                    det4 += 1
-                if D.detectFaceViaCVLIBFaceDetector():
-                    det5 += 1
+                img_path = os.path.join(dir, file)
+                D = FaceDetectors(img_path, "fake" in img_path)
+                ret = D.detectFaceViaMTCNNFaceDetector()
+                det1_tp += ret[0]
+                det1_tn += ret[1]
+                det1_fp += ret[2]
+                det1_fn += ret[3]
+                
+                ret = D.detectFaceViaHaarCascadeFaceDetector()
+                det2_tp += ret[0]
+                det2_tn += ret[1]
+                det2_fp += ret[2]
+                det2_fn += ret[3]
+                
+                ret = D.detectFaceViaHoGFaceDetector()
+                det3_tp += ret[0]
+                det3_tn += ret[1]
+                det3_fp += ret[2]
+                det3_fn += ret[3]
+                
+                ret = D.detectFaceViaCNNFaceDetector()
+                det4_tp += ret[0]
+                det4_tn += ret[1]
+                det4_fp += ret[2]
+                det4_fn += ret[3]
+                
+                ret = D.detectFaceViaDNNFaceDetector()
+                det5_tp += ret[0]
+                det5_tn += ret[1]
+                det5_fp += ret[2]
+                det5_fn += ret[3]
 
-            r1.append((det1 * 100.0) / all_files)
-            r2.append((det2 * 100.0) / all_files)
-            r3.append((det3 * 100.0) / all_files)
-            r4.append((det4 * 100.0) / all_files)
-            r5.append((det5 * 100.0) / all_files)
+            r1.append((det1_tp + det1_tn) / (det1_tp + det1_tn + det1_fp + det1_fn))
+            r2.append((det2_tp + det2_tn) / (det2_tp + det2_tn + det2_fp + det2_fn))
+            r3.append((det3_tp + det3_tn) / (det3_tp + det3_tn + det3_fp + det3_fn))
+            r4.append((det4_tp + det4_tn) / (det4_tp + det4_tn + det4_fp + det4_fn))
+            r5.append((det5_tp + det5_tn) / (det5_tp + det5_tn + det5_fp + det5_fn))
 
     plt.bar(np.array(brightness_factors) - 0.08, r1,
-            color='blue', width=0.03, label="Face recognition")
+            color='blue', width=0.03, label="MTCNN")
     plt.bar(np.array(brightness_factors) - 0.04, r2,
             color='green', width=0.03, label="Haar (opencv)")
     plt.bar(np.array(brightness_factors), r3,
@@ -89,12 +108,11 @@ def do_analysis_brightness_effect(base_dir, brightness_factors):
     plt.bar(np.array(brightness_factors) + 0.08, r5,
             color='yellow', width=0.03, label="DNN (cvlib)")
     plt.xticks(np.array(brightness_factors))
-    plt.ylabel('úspešnosť detekcie (%)')
+    plt.ylabel('presnosť detekcie (accuracy)')
     plt.xlabel('faktor jasu')
-    plt.title('Vplyv zmeny jasu na úspešnosť detekcie tváre')
+    plt.title('Vplyv zmeny jasu na presnosť detekcie tváre')
     plt.legend()
     plt.show()
-
 
 def do_analysis_downscale_effect(base_dir, downscale_factors):
     inner_dirs = [x[0] for x in os.walk(base_dir) if x[0] is not base_dir]
@@ -103,47 +121,68 @@ def do_analysis_downscale_effect(base_dir, downscale_factors):
     r3 = []
     r4 = []
     r5 = []
-    inner_dirs = sorted(inner_dirs)
-    for dir in reversed(inner_dirs):
-            det1 = 0
-            det2 = 0
-            det3 = 0
-            det4 = 0
-            det5 = 0
-            all_files = len(os.listdir(dir))
+    for dir in inner_dirs:
+            det1_tp = det1_tn = det1_fp = det1_fn = 0
+            det2_tp = det2_tn = det2_fp = det2_fn = 0
+            det3_tp = det3_tn = det3_fp = det3_fn = 0
+            det4_tp = det4_tn = det4_fp = det4_fn = 0
+            det5_tp = det5_tn = det5_fp = det5_fn = 0
             for file in os.listdir(dir):
-                D = Detectors(os.path.join(dir, file))
-                if D.detectFaceViaFaceRecognition():
-                    det1 += 1
-                if D.detectFaceViaHaarCascadeFaceDetector():
-                    det2 += 1
-                if D.detectFaceViaHoGFaceDetector():
-                    det3 += 1
-                if D.detectFaceViaCNNFaceDetector():
-                    det4 += 1
-                if D.detectFaceViaCVLIBFaceDetector():
-                    det5 += 1
+                img_path = os.path.join(dir, file)
+                D = FaceDetectors(img_path, "fake" in img_path)
+                ret = D.detectFaceViaMTCNNFaceDetector()
+                det1_tp += ret[0]
+                det1_tn += ret[1]
+                det1_fp += ret[2]
+                det1_fn += ret[3]
+                
+                ret = D.detectFaceViaHaarCascadeFaceDetector()
+                det2_tp += ret[0]
+                det2_tn += ret[1]
+                det2_fp += ret[2]
+                det2_fn += ret[3]
+                
+                ret = D.detectFaceViaHoGFaceDetector()
+                det3_tp += ret[0]
+                det3_tn += ret[1]
+                det3_fp += ret[2]
+                det3_fn += ret[3]
+                
+                ret = D.detectFaceViaCNNFaceDetector()
+                det4_tp += ret[0]
+                det4_tn += ret[1]
+                det4_fp += ret[2]
+                det4_fn += ret[3]
+                
+                ret = D.detectFaceViaDNNFaceDetector()
+                det5_tp += ret[0]
+                det5_tn += ret[1]
+                det5_fp += ret[2]
+                det5_fn += ret[3]
 
-            r1.append((det1 * 100.0) / all_files)
-            r2.append((det2 * 100.0) / all_files)
-            r3.append((det3 * 100.0) / all_files)
-            r4.append((det4 * 100.0) / all_files)
-            r5.append((det5 * 100.0) / all_files)
+            print((det1_tp + det1_tn) / (det1_tp + det1_tn + det1_fp + det1_fn))
+            print((det1_tp + det1_tn))
+            r1.append((det1_tp + det1_tn) / (det1_tp + det1_tn + det1_fp + det1_fn))
+            r2.append((det2_tp + det2_tn) / (det2_tp + det2_tn + det2_fp + det2_fn))
+            r3.append((det3_tp + det3_tn) / (det3_tp + det3_tn + det3_fp + det3_fn))
+            r4.append((det4_tp + det4_tn) / (det4_tp + det4_tn + det4_fp + det4_fn))
+            r5.append((det5_tp + det5_tn) / (det5_tp + det5_tn + det5_fp + det5_fn))
 
-    plt.bar(np.array(downscale_factors) - 0.025, r1,
-            color='blue', width=0.015, label="Face recognition")
+    print(r1)
+    plt.bar(np.array(downscale_factors) - 0.02, r1,
+            color='blue', width=0.01, label="MTCNN")
     plt.bar(np.array(downscale_factors) - 0.01, r2,
-            color='green', width=0.015, label="Haar (opencv)")
+            color='green', width=0.01, label="Haar (opencv)")
     plt.bar(np.array(downscale_factors), r3,
-            color='red', width=0.015, label="HoG (dlib)")
+            color='red', width=0.01, label="HoG (dlib)")
     plt.bar(np.array(downscale_factors) + 0.01, r4,
-            color='black', width=0.015, label="CNN (dlib)")
-    plt.bar(np.array(downscale_factors) + 0.025, r5,
-            color='yellow', width=0.015, label="DNN (cvlib)")
+            color='black', width=0.01, label="CNN (dlib)")
+    plt.bar(np.array(downscale_factors) + 0.02, r5,
+            color='yellow', width=0.01, label="DNN (cvlib)")
     plt.xticks(np.array(downscale_factors))
-    plt.ylabel('úspešnosť detekcie (%)')
+    plt.ylabel('presnosť detekcie (accuracy)')
     plt.xlabel('downscale faktor')
-    plt.title('Vplyv zmeny rozlíšenia na úspešnosť detekcie tváre')
+    plt.title('Vplyv zmeny rozlíšenia na presnosť detekcie tváre')
     plt.legend()
     plt.show()
 
@@ -186,7 +225,7 @@ def main():
                         help="filter faces by certain face width, copy them to output dir", type=int, const=90, nargs='?')
     parser.add_argument('-ffl', "--filter-face-limit",
                         help="maximal number of faces filtered to output dir", type=int, default=100, nargs='?')
-    parser.add_argument("--output-dir", help="working directory (default: CWD/out)",
+    parser.add_argument('-o', "--output-dir", help="working directory (default: CWD/out)",
                         default=os.getcwd() + "/out", nargs='?')
     parser.add_argument('-cb', "--change-brightness",
                         help="change brightness factor of images; factor > 1 to enhance brightness, factor < 1 to decrease", type=float)
