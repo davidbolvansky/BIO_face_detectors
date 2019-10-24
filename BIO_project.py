@@ -16,7 +16,7 @@ from PIL import Image, ImageEnhance
 from Detectors import FaceDetectors
 
 brightness_factors = [0.1, 0.3, 0.6, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0]
-downscale_factors = [0.1, 0.2, 0.3, 0.4]#, 0.5, 0.6, 0.8, 1.0]
+downscale_factors = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.8, 1.0]
 
 
 def get_images_in_folder_recursively(img_dir):
@@ -121,6 +121,7 @@ def do_analysis_downscale_effect(base_dir, downscale_factors):
     r3 = []
     r4 = []
     r5 = []
+    inner_dirs = sorted(inner_dirs)
     for dir in inner_dirs:
             det1_tp = det1_tn = det1_fp = det1_fn = 0
             det2_tp = det2_tn = det2_fp = det2_fn = 0
@@ -160,15 +161,12 @@ def do_analysis_downscale_effect(base_dir, downscale_factors):
                 det5_fp += ret[2]
                 det5_fn += ret[3]
 
-            print((det1_tp + det1_tn) / (det1_tp + det1_tn + det1_fp + det1_fn))
-            print((det1_tp + det1_tn))
             r1.append((det1_tp + det1_tn) / (det1_tp + det1_tn + det1_fp + det1_fn))
             r2.append((det2_tp + det2_tn) / (det2_tp + det2_tn + det2_fp + det2_fn))
             r3.append((det3_tp + det3_tn) / (det3_tp + det3_tn + det3_fp + det3_fn))
             r4.append((det4_tp + det4_tn) / (det4_tp + det4_tn + det4_fp + det4_fn))
             r5.append((det5_tp + det5_tn) / (det5_tp + det5_tn + det5_fp + det5_fn))
 
-    print(r1)
     plt.bar(np.array(downscale_factors) - 0.02, r1,
             color='blue', width=0.01, label="MTCNN")
     plt.bar(np.array(downscale_factors) - 0.01, r2,
