@@ -20,11 +20,20 @@
 	\end{titlepage}
 	
 	\section{Úvod}
-	V~našej práci sme modelovali a simulovali\footnote{\url{https://www.fit.vutbr.cz/study/courses/IMS/public/prednasky/IMS.pdf}, strana 8} proces výroby oceľových rúr zo šrotu. Na základe modelu\footnote{\url{https://www.fit.vutbr.cz/study/courses/IMS/public/prednasky/IMS.pdf}, strana 7} a simulačných experimentov bude ukázané, ako veľmi sa zmení produkcia prevádzky, keď sa zmení sortiment, zmenia prestoje alebo zvýši kadencia.
+	Cieľom tohto projektu bolo preskúmať vplyv rozlíšenia a jasu na úspešnosť detekcie tváre. Bolo vybraných 5 nástrojov na detekciu tvárí, ktoré sú momentálne najpoužívanejšie a najpopulárnejšie. Na vybranom datasete fotografií sme vykonali niekoľko experimentov, kde sme skúšali meniť rozlíšenie/jas fotografií a sledovali sme, aký vplyv má táto zmena na detektory a ich úspešnosť v detekcií tvárí.
 	
-	Zmyslom štúdie je zistiť, ako veľmi ovplyvní vybraný sortiment rúr produktivitu, efektivitu, a teda i celý zárobok firmy. Podľa slov výrobného riaditeľa firmy, železiarne by ocenili vytvorenie takejto simulačnej štúdie, a preto sme sa ubrali týmto smerom.
+	\section{Dataset a výber fotiek na experimenty}
+	Na účely experimentovania sme si vybrali dataset \textit{FBBD} \footnote{\url{http://vis-www.cs.umass.edu/fddb/}}. Z tohto datasetu sme vybrali 100 fotiek, na ktorých sa nachádzala len jedna tvár, a táto tvár mala fixnú pixelovú šírku tváre \-- 90 pixelov. Výber fotiek mal takéto obmedzenia hlavne z dôvodu experimentovania a stanovania si základných parametrov, ktoré fotografie budú mať. Použitie fixnej pixelovej dĺžky tvárí bolo odporúčané najmä pre experimenty zo zmenami rozlíšenia.
+	V našom výbere fotiek na experimentovanie sme snažili mať čo najviac vyvážené rasové rozloženie, no kvôli prechádzajúcimi obmedzeniam a nedostatku takýchto fotiek toto rovnomerné rozloženie nebolo možné úplne dosiahnuť. Výsledných 100 fotiek tak obsahuje 72 osôb europoidnej rasy, 14 osôb mongoloidnej rasy a 14 osôb negroidnej rasy. Pre účely zisťovania \textit{true negative} prípadov sme si našli 14 ďalších fotografií, ktoré sa podobajú ľudskej tvári.
 	
-	Pre spracovanie modelu bolo nutné získať potrebné údaje pracovníkov, ktorí vo firme robia, technológov v~danej oblasti a preštudovať dlhé príručky ohľadom samotného výrobného procesu a rôznych sortimentov rúr. Firma poskytuje širokú škálu dĺžok rúr, šírok stien a rôznych akostí a preto bolo veľmi dôležité si zvoliť jeden typ rúr, ktorý bude typický pre danú firmu a bude odpovedať istému priemeru celého sortimentu.
+	\section{Výber nástrojov na detekciu tvárí}
+	
+	Vybrali nasledovných 5 nástrojov s ktorými sme následne prevádzali experimenty a zisťovali ako obstoja v netradičných / menej ideálnych podmienkach.
+	
+	\subsection{MTCNN}
+	Momentálnu \textit{state-of-the-art} detekciu tvári je možné dosiahnuť pomocou \textit{Multi-task Cascade Convolutional Neural Network}. Táto metóda bola predstavená vo vedeckom článku \textit{Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks} \footnote{\url{https://arxiv.org/pdf/1604.02878.pdf}}. Hotovú implementáciu (ktorú sme aj použili na experimenty) je možné nájsť na: \url{https://github.com/ipazc/mtcnn}.
+	
+	\section{Vyhodnotenie výsledkov, záver}
 	
 	
 \end{document}
