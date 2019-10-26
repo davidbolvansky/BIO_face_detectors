@@ -54,6 +54,13 @@ def do_analysis_brightness_effect(base_dir):
         pos = dir.find("brightness_")
         if pos > 0:
             brightness_factors.append(float(dir[dir.rfind("_") + 1:]))
+        else:
+            print("Unexpected dir:", dir)
+            inner_dirs.remove(dir)
+
+    print("Detected brightness factors:", str(brightness_factors))
+    if len(brightness_factors) == 0:
+        return
 
     for dir in inner_dirs:
             det1_tp = det1_tn = det1_fp = det1_fn = 0
@@ -136,6 +143,13 @@ def do_analysis_downscale_effect(base_dir):
         pos = dir.find("downscale_")
         if pos > 0:
             downscale_factors.append(float(dir[dir.rfind("_") + 1:]))
+        else:
+            print("Unexpected dir:", dir)
+            inner_dirs.remove(dir)
+
+    print("Detected downscale factors:", str(downscale_factors))
+    if len(downscale_factors) == 0:
+        return
 
     for dir in inner_dirs:
             det1_tp = det1_tn = det1_fp = det1_fn = 0
@@ -275,7 +289,7 @@ def main():
         print("Images were saved to:", args.output_dir)
     elif args.downscale_factors is not None:
         if len(args.downscale_factors) == 0:
-            print("Using default brightness factors:", str(downscale_factors))
+            print("Using default downscale factors:", str(downscale_factors))
             for f in downscale_factors:
                 downscale_images(args.input_dir, f, args.output_dir)
         else:
