@@ -24,22 +24,22 @@
 	\end{titlepage}
 	
 	\section{Úvod}
-	Cieľom tohto projektu bolo preskúmať vplyv rozlíšenia a jasu na úspešnosť detekcie tváre. Bolo vybraných 5 nástrojov na detekciu tvárí, ktoré sú momentálne najpoužívanejšie a najpopulárnejšie. Na vybranom datasete fotografií sme vykonali niekoľko experimentov, kde sme skúšali meniť rozlíšenie/jas fotografií a sledovali sme, aký vplyv má táto zmena na detektory a ich úspešnosť v detekcií tvárí.
+	Cieľom tohto projektu bolo preskúmať vplyv rozlíšenia a jasu na úspešnosť detekcie tvárí. Bolo vybraných 5 nástrojov na detekciu tvárí, ktoré sú momentálne najpoužívanejšie a najpopulárnejšie. Na vybranom datasete fotografií sme vykonali niekoľko experimentov, kde sme skúšali meniť rozlíšenie/jas fotografií a sledovali sme, aký vplyv má táto zmena na detektory a ich úspešnosť v detekcií tvárí.
 	
 	\section{Dataset a výber fotografií na experimenty}
 	Na účely experimentovania sme si vybrali dataset \textit{Face Detection Data Set and Benchmark  (FBBD)} \footnote{\url{http://vis-www.cs.umass.edu/fddb/}}, ktorý bol navrhnutý na skúmanie problému detekcie tvárí.
-	
 	Z tohto datasetu sme vybrali 100 fotografií, na ktorých sa nachádzala len jedna tvár, a táto tvár mala fixnú pixelovú šírku tváre \-- 90 pixelov. Výber fotografií mal takéto obmedzenia hlavne z dôvodu experimentovania a stanovania si základných parametrov, ktoré fotografie budú mať. Použitie fixnej pixelovej dĺžky tvárí bolo odporúčané najmä pre experimenty zo zmenami rozlíšenia.
 	V našom výbere fotografií na experimentovanie sme snažili mať čo najviac vyvážené rasové rozloženie, no kvôli prechádzajúcimi obmedzeniam a nedostatku takýchto fotografií toto rovnomerné rozloženie nebolo možné úplne dosiahnuť. Výsledných 100 fotografií tak obsahuje 72 osôb europoidnej rasy, 14 osôb mongoloidnej rasy a 14 osôb negroidnej rasy. Pre účely zisťovania \textit{true negative} prípadov sme si našli 14 ďalších fotografií, kde nie sú ľudské tváre, no obsahujú objekty, ktoré pripomínajú ľudskú tvár (\textit{falošné tváre}). Dataset \textit{FBBD} obsahuje aj anotácie pre niektoré fotografie, no pre väčšinu našich vybraných fotografií informáciu o \textit{ROI} žiaľ neposkytoval.
 	
 	\section{Výber nástrojov na detekciu tvárí}
 	
-	Vybrali nasledovných 5 nástrojov s ktorými sme následne prevádzali experimenty a zisťovali ako obstoja v netradičných / menej ideálnych podmienkach.
+	Vybrali sme nasledovných 5 nástrojov, s ktorými sme následne prevádzali experimenty, a zisťovali ako obstoja v netradičných / menej ideálnych podmienkach.
 	
 	\subsection*{MTCNN}
 	Momentálnu \textit{state-of-the-art} detekciu tvári je možné dosiahnuť pomocou \textit{Multi-task Cascade Convolutional Neural Network}. Táto metóda bola predstavená v článku \textit{Joint Face Detection and Alignment using Multi-task Cascaded Convolutional Networks} \footnote{\url{https://arxiv.org/pdf/1604.02878.pdf}}. Pri spracovaní daného obrázku ho spočiatku zmeníme v rôznych mierkach, aby sme vytvorili obrazovú pyramídu, ktorá je vstupom nasledujúcej trojstupňovej kaskádovej štruktúry. 
 	
-	Existujú tri stupne klasifikácie:
+	\newpage
+	\noindent Existujú tri stupne klasifikácie:
 	
 	\begin{itemize}
 		\item \textbf{1. fáza}
@@ -98,9 +98,9 @@
 	
 	\section{Experimenty}
 	
-	Vybraných 100 fotiek sme rozčlenili do priečinkov podla rasovej príslušnosti osôb na fotografiách. Pre každú rasu sme zisťovali vplyv zmeny rozlíšenia a jasu na úspešnosť detekcie tvárí. Zobrali sme aj 14 fotografií, ktoré neobsahovali ľudské tváre, ale obsahovali niečo, čo sa na ľudské tváre môže podobať a skúmali sme, či nástroje správe odhalia tento fakt. Nakoniec sme zobrali všetkých 100 fotiek, pridali sme k týchto 14 fotografií, a urobili celé meranie aj pre túto sadu fotografií.
+	Vybraných 100 fotiek sme rozčlenili do priečinkov podla rasovej príslušnosti osôb na fotografiách. Pre každú rasu sme zisťovali vplyv zmeny rozlíšenia a jasu na úspešnosť detekcie tvárí. Zobrali sme aj 14 fotografií, ktoré neobsahovali ľudské tváre, ale obsahovali niečo, čo sa na ľudské tváre môže podobať, a skúmali sme, či nástroje správe odhalia tento fakt. Nakoniec sme zobrali všetkých 100 fotiek, pridali sme k nim týchto 14 fotografií, a urobili celé meranie aj pre túto sadu fotografií.
 	
-	Pomocou vytvoreného skriptu sme vytvorili nové obrázky, ktoré mali znížené rozlíšenie. Detektory sa pokúšali hladať tváre na fotografiách, ktoré boli 10, 20, 30, 40, 50, 60, 80 a 100 \% pôvodných fotografií. Vytvorili sme aj nové zosvetlené / ztmavené fotografie, ktoré mali rôznu úroveň jasu. Vyskúšali sme 4 úrovne zosvetlenia (faktor jasu $>$ 1) a 4 úrovne ztmavenia (faktor jasu $<$ 1) fotografií. Následne sme pristúpili k meraniu úspešnosti detekcie tvárí pomocou vyššie uvedených nástrojov. Na meranie výkonnosti detektorov sme použili metriku \textit{Accuracy}.
+	Pomocou vytvoreného skriptu sme vytvorili nové obrázky, ktoré mali znížené rozlíšenie. Detektory sa pokúšali hladať tváre na fotografiách, ktoré boli 10, 20, 30, 40, 50, 60, 80 a 100 \% pôvodných fotografií. Vytvorili sme aj nové zosvetlené / stmavené fotografie, ktoré mali rôznu úroveň jasu. Vyskúšali sme 4 úrovne zosvetlenia (faktor jasu $>$ 1) a 4 úrovne stmavenia (faktor jasu $<$ 1) fotografií. Následne sme pristúpili k meraniu úspešnosti detekcie tvárí pomocou vyššie uvedených nástrojov. Na meranie výkonnosti detektorov sme použili metriku \textit{Accuracy}.
 	
 	Presnosť (\textit{Accuracy}) je jedna z metrík pre hodnotenie klasifikačných modelov. Formálne má presnosť nasledovnú definíciu:
 	\begin{center}
@@ -110,7 +110,7 @@
 	\begin{center}
 		Presnosť = $\textfrac{true positive + true negative}{true positive + true negative + false positive + false negative}$
 	\end{center}
-	Ak detektor nenašiel tvár na fotografií zaznamenali sme si to ako \textit{false negative}, v prípade falošných tvarí ako \textit{true negative} prípad. V prípade, že detektor našiel jednu alebo viac tvárí na fotografií, kde nebola ľudská tvár, všetky výskyty sa rátali ako \textit{false positive} prípady. Ak našiel jednu alebo viac tvári na fotografii so skutočnou ľudskou tvárou, jeden prípad sa započítal ako nájdenie tváre (\textit{true positive} prípad) a ostatné výskyty ako \textit{false positive} prípady. Ako sme vyššie uviedli, pre naše fotografie neboli dostupné F informácie \-- ak by boli, bolo by možné použiť metriku \textit{Intersection over union (IoU)} spolu s nejakou hranicou dobrej predikcie a lepšie stanoviť, či jedna z nájdených tvári je naozaj tá správna.
+	Ak detektor nenašiel tvár na fotografií, zaznamenali sme si to ako \textit{false negative}, v prípade falošných tvarí ako \textit{true negative} prípad. V prípade, že detektor našiel jednu alebo viac tvárí na fotografií, kde nebola ľudská tvár, všetky výskyty sa rátali ako \textit{false positive} prípady. Ak našiel jednu alebo viac tvárí na fotografii so skutočnou ľudskou tvárou, jeden prípad sa započítal ako nájdenie tváre (\textit{true positive} prípad) a ostatné výskyty ako \textit{false positive} prípady. Ako sme vyššie uviedli, pre naše fotografie neboli dostupné \textit{ROI} informácie \-- ak by boli, bolo by možné použiť metriku \textit{Intersection over union (IoU)} spolu s nejakou hranicou dobrej predikcie a lepšie stanoviť, či jedna z nájdených tvári je naozaj tá správna.
 	
 	
 	\subsection*{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí}
@@ -118,51 +118,49 @@
 	\subsubsection*{Europoidná rasa}
 	
 	\begin{figure}[h!]
-		\includegraphics[width=\textwidth]{Vysledky_rozslisenie/europ/Figure_1.png}
+		\includegraphics[height=6cm, width=\textwidth]{Vysledky_rozslisenie/europ/Figure_1.png}
 		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí osôb europoidnej rasy}
 	\end{figure}
 
-	\newpage
 	
+	\newpage
 	\subsubsection*{Mongoloidná rasa}
 	\begin{figure}[h!]
-		\includegraphics[width=\textwidth]{Vysledky_rozslisenie/mongo/Figure_1.png}
+		\includegraphics[height=6cm,width=\textwidth]{Vysledky_rozslisenie/mongo/Figure_1.png}
 		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí osôb mongoloidnej rasy}
 	\end{figure}
 
-	Z grafov vidíme, že výsledky presnosti detektorov sú veľmi podobné medzi mongoloidnou a europoidnou rasou. Všetky detektory si vedú veľmi dobre aj pri fotografiách, ktoré sú len 40 \% ich pôvodnej veľkosti. Za touto hranicou potvrdzujú DNN a MTCNN, že sa jedná o momentálne \textit{state-of-the-art} detektory tvárí a aj pri veľmi malých fotografiách dokážu nájsť tváre a neprodukujú mnoho \textit{false positive} prípadov.
+	Z grafov vidíme, že výsledky presnosti detektorov sú veľmi podobné medzi mongoloidnou a europoidnou rasou. Všetky detektory si vedú veľmi dobre aj pri fotografiách, ktoré sú len 40 \% ich pôvodnej veľkosti. Za touto hranicou potvrdzujú DNN a MTCNN, že sa jedná o momentálne \textit{state-of-the-art} detektory tvárí a aj pri veľmi malých fotografiách dokážu nájsť tváre.
 
-	\newpage
-	
 	\subsubsection*{Negroidná rasa}
 	\begin{figure}[h!]
-		\includegraphics[width=\textwidth]{Vysledky_rozslisenie/negro/Figure_1.png}
+		\includegraphics[height=6cm,width=\textwidth]{Vysledky_rozslisenie/negro/Figure_1.png}
 		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí osôb negroidnej rasy}
 	\end{figure}
 
+	\newpage
 	U negroidnej rasy je však možné zaznamenať, že presnosť detektora MTCNN sa u tejto rasy znížila. Trénovacia sada zrejme obsahovala málo osôb tejto rasy.
 	
-	\newpage
 	\subsubsection*{Falošné tváre}
 	\begin{figure}[h!]
-		\includegraphics[width=\textwidth]{Vysledky_rozslisenie/fake/Figure_1.png}
-		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí - fotografie falošných tvárí}
+		\includegraphics[height=6cm,width=\textwidth]{Vysledky_rozslisenie/fake/Figure_1.png}
+		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí - falošné tváre}
 	\end{figure}
 
-	Vidíme, že detektori MTCNN, HoG, CNN je možné ľahko oklamať fotografiami objektov, ktoré sa podobajú na ľudské tváre, a z menšími rozlíšeniami sa situácia len zhoršuje. Haar je mierne lepší od nich, no detektor DNN je u tohto experimentu jasný vítaz.
+	Vidíme, že detektory MTCNN, HoG, CNN je možné ľahko oklamať fotografiami falošných tvárí, a s menšími rozlíšeniami sa situácia len zhoršuje. Haar je mierne od nich lepší, no detektor DNN je u tohto experimentu jasný vítaz.
 	
 	\subsubsection*{Všetky rasy a falošné tváre}
 	\begin{figure}[h!]
-		\includegraphics[width=\textwidth]{Vysledky_rozslisenie/all/Figure_1.png}
-		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí - všetky rasy a falošné tváre}
+		\includegraphics[height=5.6cm,width=\textwidth]{Vysledky_rozslisenie/all/Figure_1.png}
+		\caption{Vplyv zmeny rozlíšenia na presnosť detekcie tvárí \-- všetky rasy a falošné tváre}
 	\end{figure}
 
-	Celkovo môžeme zhodnotiť, že všetky detektory sú dosť presné aj pri malých rozlíšeniach. Pri veľmi malých rozlíšeniach sú ale v súčasne dobe najlepšie MTCNN a DNN.
+	Celkovo môžeme zhodnotiť, že všetky detektory sú dosť presné aj pri malých rozlíšeniach. Pri veľmi malých rozlíšeniach sú ale v súčasnej dobe najlepšie MTCNN a DNN.
 	Situácia u ostatných detektorov by mohla byť lepšia, ak by boli natrénované na inom datasete alebo spustené s inými parametrami. Graf ukazuje aj niektoré zaujímave a možno na prvý pohľad prekvapivé výsledky, najmä v prípade detektorov CNN, HoG a Haar. 
 	
-	Predtrénovaná CNN umožňuje dobre detegovať tváre len ak je rozlíšenie tváre na fotografii aspoň 80x80. Implemtácia CNN v dlib umožňuje nastaviť parameter \texttt{upsample count}, ktorý môže pomôcť pri malých fotografiách \-- odporúčaná hodnota je 1. Na grafoch si je možné všimnúť zaujímavý pád presnosti CNN na rozmedzí 30 \-- 40 \%, čo však je možné vysvetliť nasledovne: 40 \% z našej fixnej šírky tváre (90px) je 36px, po 1x upsample dosahujeme už spomínané minimálne rozlíšenie 80x80. V prípade 30 \% je teda jasné, že sa už nachádzame pod touto hranicou a detekcia tvári je veľmi slabá (čo namerané výsledky plne potvrdzujú). Presnosť detekcie u CNN je možné zlepšiť zmenou parametru \textit{upsample count} na vyššie číslo, no doba potrebná na detekciu tváre za znateľne zvýši, čo môže byť už problematické na reálne použitie. Toto vysvetlenie platí aj pre HoG, keďže aj tu bola použitá hodnota 1 ako \texttt{upsample count} a aj u HoG z dlib platí, že umožňuje dobre detegovať tváre len ak je rozlíšenie tváre na fotografii aspoň 80x80.
+	Predtrénovaná CNN umožňuje dobre detegovať tváre len ak je rozlíšenie tváre na fotografiách s rozlíšením aspoň 80x80 pixelov. Implementácia CNN v dlib umožňuje nastaviť parameter \texttt{upsample count}, ktorý môže pomôcť pri malých fotografiách \-- odporúčaná hodnota je 1. Na grafoch si je možné všimnúť zaujímavý pád presnosti CNN na rozmedzí 30 a 40 \%, čo však je možné vysvetliť nasledovne: 40 \% z našej fixnej šírky tváre (90px) je 36px, po 1x upsample dosahujeme už spomínané minimálne rozlíšenie 80x80. V prípade 30 \% je teda jasné, že sa už nachádzame pod touto hranicou a detekcia tvári je veľmi slabá (čo namerané výsledky plne potvrdzujú). Presnosť detekcie u CNN je možné zlepšiť zmenou parametru \texttt{upsample count} na vyššie číslo, no doba potrebná na detekciu tváre za znateľne zvýši, čo môže byť už problematické na reálne použitie. Toto vysvetlenie platí aj pre HoG, keďže aj tu bola použitá hodnota 1 ako \texttt{upsample count} a aj u HoG z dlib platí, že umožňuje dobre detegovať tváre len ak je rozlíšenie tváre na fotografii aspoň 80x80.
 
-	Ako už bolo spomenuté, Haar je založený na princípe obrázkovej pyramídy, ktorá je tvorená na základe \textit{scale faktoru}. Podľa \textit{scale faktoru} sa obrázok zmenšuje a tým sa zvyšuje šanca nájdenia zhody s veľkosťou modelu pre detekciu. Pre experimenty sme použili model \texttt{haarcascade\_frontalface\_default.xml}, ktorý je trénovaný na obrázkoch v rozlíšení 24x24. Hodnota \textit{scale faktoru} 1.1 (ktorá je predvolená v implementácii Haar v OpenCV) určuje, že obrázok je medzi dvoma vrstvami redukovaný o 10 \% (tj. faktor definuje koľko vrstiev bude). Zmenou \textit{scale faktor} parametru je teda možné zlepšiť presnosť detekcie, no podobne ako u CNN, zmena tohto parametra za účelom zvýšenia presnosti prináša so sebou aj zvýšenie doby potrebnej na detekciu tváre. 
+	Ako už bolo spomenuté, Haar je založený na princípe obrázkovej pyramídy, ktorá je tvorená na základe \textit{scale faktoru}. Pre experimenty sme použili model \texttt{haarcascade\_frontalface\_default.xml}, ktorý je trénovaný na obrázkoch v rozlíšení 24x24. Hodnota \textit{scale faktoru} 1.1 (ktorá je predvolená v implementácii Haar v OpenCV) určuje, že obrázok je medzi dvoma vrstvami redukovaný o 10 \% (tj. faktor definuje koľko vrstiev bude). Zmenou \textit{scale faktor} parametru je teda možné zlepšiť presnosť detekcie, no podobne ako u CNN, zmena tohto parametra za účelom zvýšenia presnosti prináša so sebou aj zvýšenie doby potrebnej na detekciu tváre. 
 	
 	\newpage
 	\subsection*{Vplyv zmeny jasu na presnosť detekcie tvárí}
@@ -174,7 +172,7 @@
 		\caption{Vplyv zmeny jasu na presnosť detekcie tvárí osôb europoidnej rasy}
 	\end{figure}
 
-	Detektori CNN a DNN bol u osôb europoidnej rasy výrazne lepší od ostatných detektorov pri vysokých úrovniach zosvetlenia fotografie.
+	Detektori CNN a DNN bol u osôb europoidnej rasy výrazne lepšie od ostatných detektorov pri vysokých úrovniach zosvetlenia fotografie.
 
 	\subsubsection*{Mongoloidná rasa}
 	\begin{figure}[h!]
@@ -192,10 +190,12 @@
 		\caption{Vplyv zmeny jasu na presnosť detekcie tvárí osôb negroidnej rasy}
 	\end{figure}
 
+	Detektor CNN bol u osôb negroidnej rasy mierne lepší ako DNN.
+
 	\subsubsection*{Falošné tváre}
 	\begin{figure}[h!]
 		\includegraphics[width=\textwidth]{Vysledky_jas/fake/Figure_1.png}
-		\caption{Vplyv zmeny jasu na presnosť detekcie tvárí - fotografie falošných tvárí}
+		\caption{Vplyv zmeny jasu na presnosť detekcie tvárí \-- falošné tváre}
 	\end{figure}
 
 	Detektor DNN potvrdil, to čo ukazoval trend z podobného merania u zmeny rozlíšenia, a nedal sa oklamať falošnými tvárami. V tom prípade avšak Haar dokázal poraziť DNN. Detektori MTCNN, HoG, CNN sa dali veľmi ľahko oklamať falošnými tvárami.
@@ -206,11 +206,11 @@
 		\caption{Vplyv zmeny jasu na presnosť detekcie tvárí - všetky rasy a falošné tváre}
 	\end{figure}
 
-	Celkovo môžeme zhodnotiť, že detektory v prípade zmeny jasu začali byť značne neúspešné až pri veľmi nízkej úrovni stmavenia / zosvetlenia. U týchto meraní sa výraznejšie vyčlenila skupina detektorov HoG, CNN, DNN, ktorá bola výrazne presnejšia v detekcii tvárí ako Haar a MTCNN. Je celkom prekvapivé, že MTCNN ako momentálne jeden z \textit{state-of-the-art} detektorov tvárí dopadol najhoršie, kde vidíme, že najmä vyššie úrovne zosvetlenia boli pre tento detektor veľkým problémom.
+	Celkovo môžeme zhodnotiť, že detektory v prípade zmeny jasu začali byť značne neúspešné až pri veľmi nízkej úrovni zosvetlenia / stmavenia. U týchto meraní sa výraznejšie vyčlenila skupina detektorov HoG, CNN, DNN, ktorá bola výrazne presnejšia v detekcii tvárí ako Haar a MTCNN. Je celkom prekvapivé, že MTCNN ako momentálne jeden z \textit{state-of-the-art} detektorov tvárí dopadol najhoršie, kde vidíme, že najmä vyššie úrovne zosvetlenia boli pre tento detektor veľkým problémom.
 	
 	\section{Záver}
 	
-	Namerané dáta ukazujú, že zmena rozlíšenia nemá výrazný vplyv na úspešnosť a presnosť detekcie, keďže detektori používajú techniky predspracovania fotografií (\textit{rescaling}), ktoré pomáha eliminovať efekt vplyvu rozlíšenia na detekciu tvárí. Experimenty taktiež poukazujú na to, že niektoré detektory horšie zvládajú mierne zmeny úrovne jasu, čo má vplyv na ich úspešnosť a presnosť v detekcii tvárí.
+	Namerané dáta ukazujú, že zmena rozlíšenia nemá výraznejší vplyv na úspešnosť a presnosť detekcie, keďže detektory používajú techniky predspracovania fotografií (\textit{rescaling}), ktoré pomáhajú eliminovať efekt vplyvu rozlíšenia na detekciu tvárí. Experimenty taktiež poukazujú na to, že niektoré detektory horšie zvládajú už aj mierne zmeny úrovne jasu, čo má negatívny vplyv na ich úspešnosť a presnosť v detekcii tvárí.
 	
 	
 \end{document}

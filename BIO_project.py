@@ -41,7 +41,7 @@ def filter_images_by_face_width(img_dir, face_width, img_limit, out_dir):
     return c
 
 
-def do_analysis_brightness_effect(base_dir, brightness_factors):
+def do_analysis_brightness_effect(base_dir):
     inner_dirs = [x[0] for x in os.walk(base_dir) if x[0] is not base_dir]
     r1 = []
     r2 = []
@@ -49,6 +49,12 @@ def do_analysis_brightness_effect(base_dir, brightness_factors):
     r4 = []
     r5 = []
     inner_dirs = sorted(inner_dirs)
+    brightness_factors = []
+    for dir in inner_dirs:
+        pos = dir.find("brightness_")
+        if pos > 0:
+            brightness_factors.append(float(dir[dir.rfind("_") + 1:]))
+
     for dir in inner_dirs:
             det1_tp = det1_tn = det1_fp = det1_fn = 0
             det2_tp = det2_tn = det2_fp = det2_fn = 0
@@ -117,7 +123,7 @@ def do_analysis_brightness_effect(base_dir, brightness_factors):
     plt.show()
 
 
-def do_analysis_downscale_effect(base_dir, downscale_factors):
+def do_analysis_downscale_effect(base_dir):
     inner_dirs = [x[0] for x in os.walk(base_dir) if x[0] is not base_dir]
     r1 = []
     r2 = []
@@ -125,6 +131,12 @@ def do_analysis_downscale_effect(base_dir, downscale_factors):
     r4 = []
     r5 = []
     inner_dirs = sorted(inner_dirs)
+    downscale_factors = []
+    for dir in inner_dirs:
+        pos = dir.find("downscale_")
+        if pos > 0:
+            downscale_factors.append(float(dir[dir.rfind("_") + 1:]))
+
     for dir in inner_dirs:
             det1_tp = det1_tn = det1_fp = det1_fn = 0
             det2_tp = det2_tn = det2_fp = det2_fn = 0
@@ -234,8 +246,6 @@ def main():
                         help="maximal number of faces filtered to output dir", type=int, default=100, nargs='?')
     parser.add_argument('-o', "--output-dir", help="working directory (default: CWD/out)",
                         default=os.getcwd() + "/out", nargs='?')
-    parser.add_argument('-cb', "--change-brightness",
-                        help="change brightness factor of images; factor > 1 to enhance brightness, factor < 1 to decrease", type=float)
     parser.add_argument('-cbf', "--change-brightness-factors",
                         help="change brightness of images with custom factors", nargs='*')
     parser.add_argument(
@@ -243,9 +253,9 @@ def main():
     parser.add_argument('-df', "--downscale-factors",
                         help="downscale images with custom factors", nargs='*')
     parser.add_argument('-beaf', "--brightness-effect-analysis-factors",
-                        help="try various face detection tools on lightened/dimmed face images and show results as a graph", nargs='*')
+                        help="try various face detection tools on lightened/dimmed face images and show results as a graph", action='store_true')
     parser.add_argument('-deaf', "--downscale-effect-analysis-factors",
-                        help="try various face detection tools on downscalled face images and show results as a graph", nargs='*')
+                        help="try various face detection tools on downscaled face images and show results as a graph", action='store_true')
     args = parser.parse_args()
 
     if args.filter_face_width:
@@ -253,16 +263,6 @@ def main():
             args.input_dir, args.filter_face_width, args.filter_face_limit, args.output_dir)
         print("Found %d images. Images were saved to: %s" %
               (count, args.output_dir))
-    elif args.change_brightness:
-        change_brightness_of_images(
-            args.input_dir, args.change_brightness, args.output_dir)
-        print("Images were saved to:", args.output_dir)
-    elif args.downscale:
-        if args.downscale > 1.0:
-            print("Error: downscale factor must be < 1", file=sys.stderr)
-        else:
-            downscale_images(args.input_dir, args.downscale, args.output_dir)
-            print("Images were saved to:", args.output_dir)
     elif args.change_brightness_factors is not None:
         if len(args.change_brightness_factors) == 0:
             print("Using default brightness factors:", str(brightness_factors))
@@ -282,20 +282,10 @@ def main():
             for f in args.downscale_factors:
                 downscale_images(args.input_dir, float(f), args.output_dir)
         print("Images were saved to:", args.output_dir)
-    elif args.brightness_effect_analysis_factors is not None:
-        if len(args.brightness_effect_analysis_factors) == 0:
-            print("Using default brightness factors:", str(brightness_factors))
-            do_analysis_brightness_effect(args.input_dir, brightness_factors)
-        else:
-            do_analysis_brightness_effect(
-                args.input_dir, [float(i) for i in args.brightness_effect_analysis_factors])
-    elif args.downscale_effect_analysis_factors is not None:
-        if len(args.downscale_effect_analysis_factors) == 0:
-            print("Using default downscale factors:", str(downscale_factors))
-            do_analysis_downscale_effect(args.input_dir, downscale_factors)
-        else:
-            do_analysis_downscale_effect(
-                args.input_dir, [float(i) for i in args.downscale_effect_analysis_factors])
+    elif args.brightness_effect_analysis_factors:
+        do_analysis_brightness_effect(args.input_dir)
+    elif args.downscale_effect_analysis_factors:
+        do_analysis_downscale_effect(args.input_dir)
 
 
 if __name__ == "__main__":
